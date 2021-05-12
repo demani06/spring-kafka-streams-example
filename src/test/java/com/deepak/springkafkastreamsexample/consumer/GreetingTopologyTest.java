@@ -1,6 +1,5 @@
 package com.deepak.springkafkastreamsexample.consumer;
 
-import com.deepak.springkafkastreamsexample.topology.GreeterTopology;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.test.TestRecord;
@@ -26,8 +25,13 @@ public class GreetingTopologyTest {
         final StreamsBuilder builder = configureTopology();
         Properties props = buildStreamDummyConfiguration();
 
+        final Topology topology = builder.build();
+
+        //This prints the topology and it can be visualised in https://zz85.github.io/kafka-streams-viz/
+        System.out.println("topology="+ topology.describe());
+
         testDriver = new TopologyTestDriver(
-                builder.build(),
+                topology,
                 props
         );
         inputTopic = testDriver.createInputTopic("users",
@@ -42,29 +46,6 @@ public class GreetingTopologyTest {
 
 
     }
-/*
-    @BeforeEach
-    void setup() {
-        // build the topology
-        Topology topology = GreeterTopology.build();
-
-        // create a test driver. we will use this to pipe data to our topology
-        Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "test");
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
-
-        testDriver = new TopologyTestDriver(topology, props);
-
-        // create the test input topic
-        inputTopic =
-                testDriver.createInputTopic(
-                        "users", Serdes.Void().serializer(), Serdes.String().serializer());
-
-        // create the test output topic
-        outputTopic =
-                testDriver.createOutputTopic(
-                        "greetings", Serdes.Void().deserializer(), Serdes.String().deserializer());
-    }*/
 
 
     private StreamsBuilder configureTopology() {
